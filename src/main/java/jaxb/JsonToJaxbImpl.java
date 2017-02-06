@@ -15,9 +15,6 @@ import java.lang.reflect.Type;
 
 
 public class JsonToJaxbImpl implements JsonToJaxb {
-
-    public static final String NAME = "jsonUtils";
-
     private static final String UTF_8 = "UTF-8";
     private Gson gson;
 
