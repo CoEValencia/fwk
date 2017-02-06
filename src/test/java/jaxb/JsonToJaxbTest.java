@@ -7,6 +7,7 @@ import org.junit.Test;
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -202,6 +203,36 @@ public class JsonToJaxbTest {
     }
 
     @Test
+    public void testToJsonJaxBElementFullNameJsonType() throws JAXBException, ClassNotFoundException {
+        String expctedDeclareType = "class jaxb.Pojo";
+
+        String json = "{\"foo\":\"vicboma1\",\"boo\":100,\"too\":222.369}";
+
+        final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("jaxb.Pojo", json,	new TypeToken<Pojo>(){}.getType());
+
+        Assert.assertEquals(expctedDeclareType,element.getDeclaredType().toString());
+
+        Assert.assertEquals(XMLConstants.NULL_NS_URI,element.getName().getNamespaceURI().toString());
+        Assert.assertEquals("",element.getName().getLocalPart().toString());
+        Assert.assertEquals(XMLConstants.DEFAULT_NS_PREFIX,element.getName().getPrefix().toString());
+    }
+
+    @Test
+    public void testToJsonJaxBJsonType() throws JAXBException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        String expctedDeclareType = "class jaxb.Pojo";
+
+        String json = "{\"foo\":\"vicboma1\",\"boo\":100,\"too\":222.369}";
+
+        final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("jaxb.Pojo", json);
+
+        Assert.assertEquals(expctedDeclareType,element.getDeclaredType().toString());
+
+        Assert.assertEquals(XMLConstants.NULL_NS_URI,element.getName().getNamespaceURI().toString());
+        Assert.assertEquals("",element.getName().getLocalPart().toString());
+        Assert.assertEquals(XMLConstants.DEFAULT_NS_PREFIX,element.getName().getPrefix().toString());
+    }
+
+    @Test
     public void testToJsonJaxBElementStringLocal() throws JAXBException {
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                 + "<LocalNamespace>\n"
@@ -274,13 +305,68 @@ public class JsonToJaxbTest {
 
 
     @Test
-    public void testToJsonJaxbElemenLocalWithFullClassNamespaceClassLocal() throws JAXBException, ClassNotFoundException {
+    public void testToJsonJaxbElemenLocalWithFullClassNamespaceClassLocalTypeToken() throws JAXBException, ClassNotFoundException {
         String expctedDeclareType = "class jaxb.Pojo";
         String expctedQnameLocal = "local";
 
         String json = "{\"foo\":\"vicboma1\",\"boo\":100,\"too\":222.369}";
 
         final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("local", "jaxb.Pojo", json,	new TypeToken<Pojo>(){}.getType());
+
+        Assert.assertEquals(expctedDeclareType,element.getDeclaredType().toString());
+
+        Assert.assertEquals(XMLConstants.NULL_NS_URI,element.getName().getNamespaceURI().toString());
+        Assert.assertEquals(expctedQnameLocal,element.getName().getLocalPart().toString());
+        Assert.assertEquals(XMLConstants.DEFAULT_NS_PREFIX,element.getName().getPrefix().toString());
+
+    }
+
+
+    @Test
+    public void testToJsonJaxbElemenLocalWithFullClassNamespaceClassUriLocalTypeToken() throws JAXBException, ClassNotFoundException {
+        String expctedDeclareType = "class jaxb.Pojo";
+        String expctedQnameLocal = "local";
+        String expctedQnameUri = "uri";
+
+        String json = "{\"foo\":\"vicboma1\",\"boo\":100,\"too\":222.369}";
+
+        final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("uri","local", "jaxb.Pojo", json,	new TypeToken<Pojo>(){}.getType());
+
+        Assert.assertEquals(expctedDeclareType,element.getDeclaredType().toString());
+
+        Assert.assertEquals(expctedQnameUri,element.getName().getNamespaceURI().toString());
+        Assert.assertEquals(expctedQnameLocal,element.getName().getLocalPart().toString());
+        Assert.assertEquals(XMLConstants.DEFAULT_NS_PREFIX,element.getName().getPrefix().toString());
+
+    }
+
+    @Test
+    public void testToJsonJaxbElemenLocalWithFullClassNamespaceClassUriLocalPrefixTypeToken() throws JAXBException, ClassNotFoundException {
+        String expctedDeclareType = "class jaxb.Pojo";
+        String expctedQnameLocal = "local";
+        String expctedQnameUri = "uri";
+        String expctedQnamePrefix = "prefix";
+
+        String json = "{\"foo\":\"vicboma1\",\"boo\":100,\"too\":222.369}";
+
+        final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("uri","local","prefix", "jaxb.Pojo", json,	new TypeToken<Pojo>(){}.getType());
+
+        Assert.assertEquals(expctedDeclareType,element.getDeclaredType().toString());
+
+        Assert.assertEquals(expctedQnameUri,element.getName().getNamespaceURI().toString());
+        Assert.assertEquals(expctedQnameLocal,element.getName().getLocalPart().toString());
+        Assert.assertEquals(expctedQnamePrefix,element.getName().getPrefix().toString());
+
+    }
+
+    @Test
+    public void testToJsonJaxbElemenLocalWithFullClassNamespaceClassLocal() throws JAXBException, ClassNotFoundException {
+        String expctedDeclareType = "class jaxb.Pojo";
+        String expctedQnameLocal = "local";
+
+        String json = "{\"foo\":\"vicboma1\",\"boo\":100,\"too\":222.369}";
+
+        final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("local", "jaxb.Pojo", json);
 
         Assert.assertEquals(expctedDeclareType,element.getDeclaredType().toString());
 
@@ -299,7 +385,7 @@ public class JsonToJaxbTest {
 
         String json = "{\"foo\":\"vicboma1\",\"boo\":100,\"too\":222.369}";
 
-        final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("uri","local", "jaxb.Pojo", json,	new TypeToken<Pojo>(){}.getType());
+        final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("uri","local", "jaxb.Pojo", json);
 
         Assert.assertEquals(expctedDeclareType,element.getDeclaredType().toString());
 
@@ -318,7 +404,7 @@ public class JsonToJaxbTest {
 
         String json = "{\"foo\":\"vicboma1\",\"boo\":100,\"too\":222.369}";
 
-        final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("uri","local","prefix", "jaxb.Pojo", json,	new TypeToken<Pojo>(){}.getType());
+        final JAXBElement<Pojo> element = jsonToJaxb.<Pojo>ToJaxbElement("uri","local","prefix", "jaxb.Pojo", json);
 
         Assert.assertEquals(expctedDeclareType,element.getDeclaredType().toString());
 
