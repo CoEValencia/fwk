@@ -1,4 +1,4 @@
-# Json To JXB
+# Json To JAXB
 
 Clase que permite :
 * Crear un elemento Jaxb genérico a partir de un Json.
