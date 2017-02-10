@@ -1,6 +1,6 @@
 package body.core.commandDispatcher;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -21,13 +21,25 @@ public class CommandDispatcherAsyncImpl<T> implements CommandDispatcherAsync<T> 
 
     }
 
+    @Override
+    public CommandDispatcherAsyncImpl<T> add(String command, List<CompletableFuture<T>> fun) {
+        fun.stream()
+            .filter(it -> it != null)
+            .forEach(it -> {
+                  add(command, it);
+              });
+
+        return this;
+    }
+
     public CommandDispatcherAsyncImpl add(String command, CompletableFuture<T> fun) {
         final List<CompletableFuture<T>> listFun = map.get(command);
-        if (null != listFun)
-            if (listFun.indexOf(fun) == -1)
+        if (null != listFun) {
+            if (!listFun.contains(fun))
                 listFun.add(fun);
-            else
-                map.put(command, Arrays.asList(fun));
+        }
+        else
+            map.put(command, new ArrayList() {{add(fun);}} );
 
         return this;
     }
@@ -51,14 +63,24 @@ public class CommandDispatcherAsyncImpl<T> implements CommandDispatcherAsync<T> 
         return this;
     }
 
-    public CompletableFuture dispatch(String command, CompletableFuture<T> fun) {
-        CompletableFuture res = CompletableFuture.completedFuture(true);
+    public CommandDispatcherAsyncImpl remove(String command) {
+        map.remove(command);
+        return this;
+    }
+
+    public CommandDispatcherAsyncImpl<T> dispatch(String command) {
         final List<CompletableFuture<T>> listFun = map.get(command);
 
-        if (null != listFun)
-            res = CompletableFuture.allOf((CompletableFuture<?>[]) listFun.toArray());
+        if (null != listFun){
+            for(int i = 0; i< listFun.size(); i++) {
+                final int[] res = {i};
+                executeSupply(listFun.get(res[0]));
+            }
+        }
 
-        return res;
+        return this;
     }
+
+    public int size() { return this.map.size(); }
 
 }

@@ -5,56 +5,59 @@ import body.core.lifecycleState.LifecycleState;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public class LifecycleAsyncImpl implements LifecycleAsync {
+public class LifecycleAsyncImpl<T> implements LifecycleAsync {
 
     private String state;
+    private T obj;
 
-    public static LifecycleAsync create() {
-        return new LifecycleAsyncImpl();
+    public static <H> LifecycleAsync create(H obj) {
+        return new LifecycleAsyncImpl<H>(obj);
     }
 
 
-    LifecycleAsyncImpl() {
-        state = LifecycleState.NO_STATE;
+    LifecycleAsyncImpl(T obj) {
+        this.state = LifecycleState.NO_STATE;
+        this.obj = obj;
     }
 
-    @Override
+    public T getObject() {
+        return this.obj;
+    }
+
+    public String getState() {
+        return this.state;
+    }
+
     public Boolean isInitialize() {
-        return (state == LifecycleState.INITIALIZE);
+        return (this.state == LifecycleState.INITIALIZE);
     }
 
-    @Override
     public Boolean isPreDestroy() {
-        return (state == LifecycleState.DESTROY);
+        return (this.state == LifecycleState.DESTROY);
     }
 
-    @Override
     public Boolean isPostConstructor() {
-        return (state == LifecycleState.CONSTRUCTOR);
+        return (this.state == LifecycleState.CONSTRUCTOR);
     }
 
-    @Override
     public Boolean isResume() {
-        return (state == LifecycleState.RESUME);
+        return (this.state == LifecycleState.RESUME);
     }
 
-    @Override
     public <H, T> CompletableFuture<T> initialize(Function<H, T> fun) {
         return null;
     }
 
-    @Override
     public <H, T> CompletableFuture<T> preDestroy(Function<H, T> fun) {
         return null;
     }
 
-    @Override
     public <H, T> CompletableFuture<T> postConstructor(Function<H, T> fun) {
         return null;
     }
 
-    @Override
-    public <H, T> CompletableFuture<T> resume(Function<H, T> fun) {
+    public <H, T> CompletableFuture<T> resume(Function<H, T> fun)  {
         return null;
     }
+
 }
