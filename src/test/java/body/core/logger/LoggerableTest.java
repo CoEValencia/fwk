@@ -58,7 +58,7 @@ public class LoggerableTest implements Loggerable {
     @Test
     public void isLoggerError() throws Exception {
         String strError = "error";
-        final Loggerable loggable = mock(this.getClass());
+        final Loggerable loggable = getMock();
         loggable.loggerDebug(strError);
         verify(loggable).loggerDebug(strError);
     }
