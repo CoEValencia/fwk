@@ -81,6 +81,25 @@ public class CommandDispatcherAsyncImpl<T> implements CommandDispatcherAsync<T> 
         return this;
     }
 
+    public CommandDispatcherAsyncImpl<T> dispatchOne(String command) {
+        final List<CompletableFuture<T>> listFun = map.get(command);
+
+        if (null != listFun){
+            for(int i = 0; i< listFun.size(); i++) {
+                final int[] res = {i};
+                executeSupply(listFun.get(res[0]));
+            }
+            remove(command);
+        }
+
+        return this;
+    }
+
+    public CompletableFuture<Void> dispatchAll(String command) {
+        final List<CompletableFuture<T>> listFun = map.get(command);
+        return CompletableFuture.allOf((CompletableFuture<?>[]) listFun.toArray(new CompletableFuture[listFun.size()]));
+    }
+
     public int size() { return this.map.size(); }
 
 }

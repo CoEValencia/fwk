@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
 import static org.mockito.Mockito.mock;
@@ -118,44 +119,113 @@ public class CommandDispatcherAsyncImplTest {
 
     @Test
     public void testDispatch() throws Exception {
-         final CompletableFuture<Boolean> completableFuture = CompletableFuture.supplyAsync(() -> {
-             try {
-                 Thread.sleep(2000);
-             } catch (InterruptedException e) {
-                 e.printStackTrace();
-             }
-             finally {
-                 return Boolean.TRUE;
-             }
-         });
+         final CompletableFuture<Callable<Boolean>> completableFuture = new CompletableFuture();
 
         completableFuture.thenAcceptAsync(it ->{
-            Assert.assertTrue(it);
+            try {
+                Assert.assertTrue(it.call());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         commandDispatcherAsync.dispatch(testCommand);
+
+        completableFuture.complete(() -> {
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            finally {
+                return Boolean.TRUE;
+            }
+        });
     }
 
     @Test
     public void testDispatch2() throws Exception {
-        final CompletableFuture<Boolean> completableFuture = CompletableFuture.completedFuture(true);
+        final CompletableFuture<Boolean> completableFuture = new CompletableFuture();
 
         completableFuture.thenAcceptAsync(it ->{
             Assert.assertTrue(it);
         });
 
-        commandDispatcherAsync.dispatch(testCommand);
+        commandDispatcherAsync
+                .add(testCommand,completableFuture)
+                .dispatch(testCommand);
     }
 
     @Test
     public void testDispatchCancel() throws Exception {
-        final CompletableFuture<Boolean> completableFuture = CompletableFuture.completedFuture(false);
+        final CompletableFuture<Boolean> completableFuture = new CompletableFuture();
+
+        commandDispatcherAsync
+                .add(testCommand,completableFuture)
+                .dispatch(testCommand);
 
         completableFuture.thenAcceptAsync(it ->{
-            Assert.assertTrue(it);
+                      Assert.assertTrue(it);
+             });
+
+        completableFuture.cancel(true);
+        completableFuture.complete(false);
+    }
+
+    @Test
+    public void testDispatchOne() throws Exception {
+        final CompletableFuture<CommandDispatcherAsync> completableFuture = new CompletableFuture();
+
+        completableFuture.thenAcceptAsync(it ->{
+            Assert.assertEquals(0,it.size());
         });
 
-        commandDispatcherAsync.dispatch(testCommand);
-        completableFuture.cancel(true);
+        commandDispatcherAsync.add(testCommand,completableFuture);
+
+        Assert.assertEquals(1,commandDispatcherAsync.size());
+
+        commandDispatcherAsync.dispatchOne(testCommand);
+
+        completableFuture.complete(commandDispatcherAsync);
+    }
+
+    @Test
+    public void testDispatchAll() throws Exception {
+        int result[] = new int[0];
+        final int expected = 2;
+        final CompletableFuture<CommandDispatcherAsync> completableFuture1 = new CompletableFuture();
+        final CompletableFuture<CommandDispatcherAsync> completableFuture2 = new CompletableFuture();
+        final CompletableFuture<CommandDispatcherAsync> completableFuture3 = new CompletableFuture();
+
+
+        commandDispatcherAsync
+                .add(testCommand,completableFuture1)
+                .add(testCommand,completableFuture2)
+                .add("testCommand3",completableFuture3);
+
+        Assert.assertEquals(2,commandDispatcherAsync.size());
+
+        commandDispatcherAsync
+                .dispatchAll(testCommand)
+                .thenAcceptAsync(it ->{
+            Assert.assertEquals(expected,result);
+        });
+
+        completableFuture1.thenAcceptAsync(it ->{
+            result[0]++;
+        });
+
+        completableFuture2.thenAcceptAsync(it ->{
+            result[0]++;
+        });
+
+        completableFuture3.thenAcceptAsync(it ->{
+            result[0]--;
+        });
+
+        completableFuture1.complete(commandDispatcherAsync);
+        completableFuture2.complete(commandDispatcherAsync);
+        completableFuture3.complete(commandDispatcherAsync);
+
     }
 }

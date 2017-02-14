@@ -19,6 +19,9 @@ public interface CommandDispatcherAsync<T> extends SafetyPromiseAsync<T> {
     CommandDispatcherAsyncImpl<T> remove(String command);
 
     CommandDispatcherAsyncImpl<T> dispatch(String command);
+    CommandDispatcherAsyncImpl<T> dispatchOne(String command);
+
+    CompletableFuture<Void> dispatchAll(String command);
 
     int size();
 }
