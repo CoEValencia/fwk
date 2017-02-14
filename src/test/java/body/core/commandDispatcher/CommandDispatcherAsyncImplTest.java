@@ -162,7 +162,7 @@ public class CommandDispatcherAsyncImplTest {
     }
 
     @Test
-    public void testDispatchOne() throws Exception {
+    public void testDispatchOnce() throws Exception {
         final CompletableFuture<CommandDispatcherAsync> completableFuture = new CompletableFuture();
 
         completableFuture.thenAcceptAsync(it ->{
@@ -173,7 +173,7 @@ public class CommandDispatcherAsyncImplTest {
 
         Assert.assertEquals(Integer.valueOf(1), commandDispatcherAsync.size());
 
-        commandDispatcherAsync.dispatchOne(testCommand);
+        commandDispatcherAsync.dispatchOnce(testCommand);
 
         completableFuture.complete(commandDispatcherAsync);
     }
