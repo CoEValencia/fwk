@@ -80,7 +80,7 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
         return this
     }
 
-    override fun dispatchOne(command: String): CommandDispatcherAsyncImpl<T> {
+    override fun dispatchOnce(command: String): CommandDispatcherAsyncImpl<T> {
         val listFun = map.get(command)
         if (null != listFun) {
             for (i in listFun!!.indices) {
