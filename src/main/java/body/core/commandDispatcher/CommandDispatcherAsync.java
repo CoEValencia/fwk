@@ -20,7 +20,7 @@ public interface CommandDispatcherAsync<T> extends SafetyPromiseAsync<T> {
 
     CommandDispatcherAsyncImpl<T> dispatch(String command);
 
-    CommandDispatcherAsyncImpl<T> dispatchOne(String command);
+    CommandDispatcherAsyncImpl<T> dispatchOnce(String command);
 
     CompletableFuture<Void> dispatchAll(String command);
 
