@@ -1,7 +1,8 @@
-# FrameworkAsync - WIP
+# Framework Async - WIP
 
+##API
 
-### Command Dispatcher Async
+### Command Dispatcher Async | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/body/core/commandDispatcher/CommandDispatcherAsyncImpl.kt) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/core/commandDispatcher/CommandDispatcherAsyncImplTest.java)
 ```
 
     CommandDispatcherAsyncImpl<T> add(String command, List<CompletableFuture<T>> fun);
