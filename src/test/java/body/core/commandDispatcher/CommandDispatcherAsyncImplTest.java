@@ -9,9 +9,6 @@ import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 /**
  * Created by vicboma on 10/02/17.
  */
@@ -21,7 +18,7 @@ public class CommandDispatcherAsyncImplTest {
 
     @Before
     public void setUp() throws Exception {
-        commandDispatcherAsync = CommandDispatcherAsyncImpl.create();
+        commandDispatcherAsync = CommandDispatcherAsyncImpl.Companion.create();
     }
 
     @After
@@ -30,19 +27,9 @@ public class CommandDispatcherAsyncImplTest {
     }
 
     @Test
-    public void testAdd() throws Exception {
-        final CommandDispatcherAsync commandDispatcherAsync = mock(CommandDispatcherAsyncImpl.class);
-        final CompletableFuture<Boolean> completableFuture = mock(CompletableFuture.class);
+    public void testAddContains() throws Exception {
+        final CompletableFuture<Boolean> completableFuture = new CompletableFuture();
         String testCommand = "testCommand";
-        commandDispatcherAsync.add(testCommand,completableFuture);
-        verify(commandDispatcherAsync).add(testCommand,completableFuture);
-    }
-
-    @Test
-    public void testContains() throws Exception {
-        final CompletableFuture<Boolean> completableFuture = CompletableFuture.completedFuture(true);
-        String testCommand = "testCommand";
-        commandDispatcherAsync.add(testCommand,completableFuture);
         final boolean res = commandDispatcherAsync
                                     .add(testCommand,completableFuture)
                                     .contains(testCommand);
@@ -55,7 +42,7 @@ public class CommandDispatcherAsyncImplTest {
     @Test
     public void testContainsNotRepeats() throws Exception {
         final int expectedParent = 2;
-        completableFuture = CompletableFuture.completedFuture(true);
+        completableFuture = new CompletableFuture<>();
         String testCommand2 = "testCommand2";
 
         commandDispatcherAsync
@@ -107,6 +94,8 @@ public class CommandDispatcherAsyncImplTest {
     public void testSize() throws Exception {
         final int expectedParent = 3;
         Assert.assertTrue(0 == commandDispatcherAsync.size());
+        completableFuture = new CompletableFuture<>();
+
         commandDispatcherAsync
                 .add(testCommand,completableFuture)
                 .add("testCommand2",completableFuture)
@@ -177,12 +166,12 @@ public class CommandDispatcherAsyncImplTest {
         final CompletableFuture<CommandDispatcherAsync> completableFuture = new CompletableFuture();
 
         completableFuture.thenAcceptAsync(it ->{
-            Assert.assertEquals(0,it.size());
+            Assert.assertEquals(Integer.valueOf(0), it.size());
         });
 
         commandDispatcherAsync.add(testCommand,completableFuture);
 
-        Assert.assertEquals(1,commandDispatcherAsync.size());
+        Assert.assertEquals(Integer.valueOf(1), commandDispatcherAsync.size());
 
         commandDispatcherAsync.dispatchOne(testCommand);
 
@@ -203,7 +192,7 @@ public class CommandDispatcherAsyncImplTest {
                 .add(testCommand,completableFuture2)
                 .add("testCommand3",completableFuture3);
 
-        Assert.assertEquals(2,commandDispatcherAsync.size());
+        Assert.assertEquals(Integer.valueOf(2), commandDispatcherAsync.size());
 
         commandDispatcherAsync
                 .dispatchAll(testCommand)

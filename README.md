@@ -20,5 +20,5 @@
 
     CompletableFuture<Void> dispatchAll(String command);
 
-    int size();
+    Integer size();
 ```
