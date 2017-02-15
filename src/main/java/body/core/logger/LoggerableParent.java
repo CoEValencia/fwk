@@ -7,5 +7,5 @@ import org.apache.log4j.Logger;
  * Trait
  */
 public interface LoggerableParent {
-    default Logger get() { return Logger.getLogger(this.getClass()); }
+    default Logger getLogger() { return Logger.getLogger(this.getClass()); }
 }

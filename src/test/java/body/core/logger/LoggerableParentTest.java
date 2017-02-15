@@ -29,6 +29,6 @@ public class LoggerableParentTest implements LoggerableParent {
     @Test
     public void isLogger() throws Exception {
         final Class<Logger> _class = Logger.class;
-        Assert.assertEquals(this.get().getClass(),_class);
+        Assert.assertEquals(this.getLogger().getClass(),_class);
     }
 }

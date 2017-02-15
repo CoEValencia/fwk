@@ -8,21 +8,23 @@ import java.util.concurrent.CompletableFuture;
 
 public interface CommandDispatcherAsync<T> extends SafetyPromiseAsync<T> {
 
-    CommandDispatcherAsyncImpl<T> add(String command, List<CompletableFuture<T>> fun);
+    CommandDispatcherAsync<T> add(String command, List<CompletableFuture<T>> fun);
 
-    CommandDispatcherAsyncImpl<T> add(String command, CompletableFuture<T> fun);
+    CommandDispatcherAsync<T> add(String command, CompletableFuture<T> fun);
 
     Boolean contains(String command);
 
-    CommandDispatcherAsyncImpl<T> remove(String command, CompletableFuture<T> fun);
+    CommandDispatcherAsync<T> remove(String command, CompletableFuture<T> fun);
 
-    CommandDispatcherAsyncImpl<T> remove(String command);
+    CommandDispatcherAsync<T> remove(String command);
 
-    CommandDispatcherAsyncImpl<T> dispatch(String command);
+    CommandDispatcherAsync<T> dispatch(String command);
 
-    CommandDispatcherAsyncImpl<T> dispatchOnce(String command);
+    CommandDispatcherAsync<T> dispatchOnce(String command);
 
     CompletableFuture<Void> dispatchAll(String command);
+
+    <T> CompletableFuture<T> dispatchAny(String command);
 
     Integer size();
 }

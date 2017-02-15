@@ -1,5 +1,6 @@
 package body.core.commandDispatcher;
 
+import body.core.logger.Loggerable;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -8,22 +9,27 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by vicboma on 10/02/17.
  */
-public class CommandDispatcherAsyncImplTest {
+public class CommandDispatcherAsyncImplTest implements Loggerable{
 
-    CommandDispatcherAsync commandDispatcherAsync;
+    private CountDownLatch latch;
+    private CommandDispatcherAsync commandDispatcherAsync;
 
     @Before
     public void setUp() throws Exception {
         commandDispatcherAsync = CommandDispatcherAsyncImpl.Companion.create();
+        latch = new CountDownLatch(1);
     }
 
     @After
     public void tearDown() throws Exception {
         commandDispatcherAsync = null;
+        latch = null;
     }
 
     @Test
@@ -116,6 +122,9 @@ public class CommandDispatcherAsyncImplTest {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            finally {
+                latch.countDown();
+            }
         });
 
         commandDispatcherAsync.dispatch(testCommand);
@@ -130,19 +139,26 @@ public class CommandDispatcherAsyncImplTest {
                 return Boolean.TRUE;
             }
         });
+
+
+        latch.await();
     }
 
     @Test
     public void testDispatch2() throws Exception {
         final CompletableFuture<Boolean> completableFuture = new CompletableFuture();
-
-        completableFuture.thenAcceptAsync(it ->{
+        completableFuture.thenAcceptAsync(it -> {
             Assert.assertTrue(it);
+            latch.countDown();
         });
 
         commandDispatcherAsync
                 .add(testCommand,completableFuture)
                 .dispatch(testCommand);
+
+        completableFuture.complete(true);
+
+        latch.await();
     }
 
     @Test
@@ -154,7 +170,7 @@ public class CommandDispatcherAsyncImplTest {
                 .dispatch(testCommand);
 
         completableFuture.thenAcceptAsync(it ->{
-                      Assert.assertTrue(it);
+                Assert.assertTrue(it);
              });
 
         completableFuture.cancel(true);
@@ -167,6 +183,7 @@ public class CommandDispatcherAsyncImplTest {
 
         completableFuture.thenAcceptAsync(it ->{
             Assert.assertEquals(Integer.valueOf(0), it.size());
+            latch.countDown();
         });
 
         commandDispatcherAsync.add(testCommand,completableFuture);
@@ -176,45 +193,92 @@ public class CommandDispatcherAsyncImplTest {
         commandDispatcherAsync.dispatchOnce(testCommand);
 
         completableFuture.complete(commandDispatcherAsync);
+
+        latch.await();
     }
 
     @Test
     public void testDispatchAll() throws Exception {
-        int result[] = new int[0];
+        final int result[] = new int[1];
         final int expected = 2;
-        final CompletableFuture<CommandDispatcherAsync> completableFuture1 = new CompletableFuture();
-        final CompletableFuture<CommandDispatcherAsync> completableFuture2 = new CompletableFuture();
-        final CompletableFuture<CommandDispatcherAsync> completableFuture3 = new CompletableFuture();
+        final CompletableFuture<Integer> completableFuture1 = new CompletableFuture();
+        final CompletableFuture<Integer> completableFuture2 = new CompletableFuture();
+
+        commandDispatcherAsync
+                .add(testCommand,completableFuture1)
+                .add(testCommand,completableFuture2)
+                .dispatchAll(testCommand)
+                .thenRunAsync(() ->{
+                    getLogger().debug("thenRunAsync: ");
+                    Assert.assertEquals(expected,result[0]);
+                    latch.countDown();
+                    getLogger().debug("latch.countDown()");
+                });
+
+        completableFuture1.thenAcceptAsync(it ->{
+            result[0]+=it;
+            getLogger().debug("completableFuture1.thenAcceptAsync: "+result[0]);
+        });
+
+        completableFuture2.thenAcceptAsync(it ->{
+            result[0]+=it;
+            getLogger().debug("completableFuture2.thenAcceptAsync: "+result[0]);
+        });
+
+
+        completableFuture1.complete(1);
+        completableFuture2.complete(1);
+
+        latch.await();
+
+        getLogger().debug("End dispatcherAll test");
+
+    }
+
+    @Test
+    public void testDispatchAny() throws Exception {
+        final int result[] = new int[1];
+        final int expected = 1;
+        final CompletableFuture<Integer> completableFuture1 = new CompletableFuture();
+        final CompletableFuture<Integer> completableFuture2 = new CompletableFuture();
+        final CompletableFuture<Integer> completableFuture3 = new CompletableFuture();
 
 
         commandDispatcherAsync
                 .add(testCommand,completableFuture1)
                 .add(testCommand,completableFuture2)
-                .add("testCommand3",completableFuture3);
-
-        Assert.assertEquals(Integer.valueOf(2), commandDispatcherAsync.size());
-
-        commandDispatcherAsync
-                .dispatchAll(testCommand)
-                .thenAcceptAsync(it ->{
-            Assert.assertEquals(expected,result);
-        });
+                .add(testCommand,completableFuture3)
+                .dispatchAny(testCommand)
+                .thenAcceptAsync( it ->{
+                    getLogger().debug("thenRunAsync: "+it);
+                    Assert.assertEquals(expected,result[0]);
+                    latch.countDown();
+                    getLogger().debug("latch.countDown()");
+                });
 
         completableFuture1.thenAcceptAsync(it ->{
-            result[0]++;
+            result[0] += it;
+            getLogger().debug("completableFuture1.thenAcceptAsync: "+result[0]);
         });
 
         completableFuture2.thenAcceptAsync(it ->{
-            result[0]++;
+            result[0] += it;
+            getLogger().debug("completableFuture2.thenAcceptAsync: "+result[0]);
         });
 
         completableFuture3.thenAcceptAsync(it ->{
-            result[0]--;
+            result[0] += it;
+            getLogger().debug("completableFuture3.thenAcceptAsync: "+result[0]);
         });
 
-        completableFuture1.complete(commandDispatcherAsync);
-        completableFuture2.complete(commandDispatcherAsync);
-        completableFuture3.complete(commandDispatcherAsync);
+        completableFuture1.complete(Integer.valueOf(1));
+        Thread.sleep(2000);
+        completableFuture2.complete(Integer.valueOf(1));
+        completableFuture3.complete(Integer.valueOf(1));
+
+        latch.await();
+
+        getLogger().debug("End dispatcherAny test");
 
     }
 }

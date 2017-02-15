@@ -6,11 +6,11 @@ package body.core.logger;
  */
 public interface Loggerable extends LoggerableParent {
 
-    default void loggerTrace(Object str) { get().trace(str); }
+    default void loggerTrace(Object str) { getLogger().trace(str); }
 
-    default void loggerDebug(Object str) { get().debug(str); }
+    default void loggerDebug(Object str) { getLogger().debug(str); }
 
-    default void loggerInfo(Object str) {  get().info(str); }
+    default void loggerInfo(Object str) {  getLogger().info(str); }
 
-    default void loggerError(Object str) {  get().error(str); }
+    default void loggerError(Object str) {  getLogger().error(str); }
 }
