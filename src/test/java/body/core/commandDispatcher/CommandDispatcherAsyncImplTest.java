@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by vicboma on 10/02/17.
@@ -182,13 +181,13 @@ public class CommandDispatcherAsyncImplTest implements Loggerable{
         final CompletableFuture<CommandDispatcherAsync> completableFuture = new CompletableFuture();
 
         completableFuture.thenAcceptAsync(it ->{
-            Assert.assertEquals(Integer.valueOf(0), it.size());
+            Assert.assertEquals(0, it.size());
             latch.countDown();
         });
 
         commandDispatcherAsync.add(testCommand,completableFuture);
 
-        Assert.assertEquals(Integer.valueOf(1), commandDispatcherAsync.size());
+        Assert.assertEquals(1, commandDispatcherAsync.size());
 
         commandDispatcherAsync.dispatchOnce(testCommand);
 
