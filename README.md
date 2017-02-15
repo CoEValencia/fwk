@@ -35,3 +35,7 @@
 
     default <T> CompletableFuture<T> executeSupply(Supplier<T> supplier) ;
 ```
+
+@ Victor Bolinches
+
+@Vicboma1
