@@ -3,7 +3,7 @@
 ##API
 
 ### Command Dispatcher Async | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/body/core/commandDispatcher/CommandDispatcherAsyncImpl.kt) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/core/commandDispatcher/CommandDispatcherAsyncImplTest.java)
-```
+```kotlin
     CommandDispatcherAsync<T> add(String command, List<CompletableFuture<T>> fun);
 
     CommandDispatcherAsync<T> add(String command, CompletableFuture<T> fun);
@@ -26,7 +26,7 @@
 ```
 
 ### Safety Promise Async | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/body/core/safetyPromise/SafetyPromiseAsync.java) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/core/safetyPromise/SafetyPromiseAsyncTest.java)
-```
+```java
     default <T> CompletableFuture<Void> executeRunnable(CompletableFuture<T> promise);
 
     default CompletableFuture<Void> executeRunnable(Runnable runnable);
@@ -37,7 +37,7 @@
 ```
 
 ### Logger | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/body/core/logger/Loggerable.java) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/core/logger/LoggerableTest.java)
-```
+```java
     default void loggerTrace(Object str);
 
     default void loggerDebug(Object str);
