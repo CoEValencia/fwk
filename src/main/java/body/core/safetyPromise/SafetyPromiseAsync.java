@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 /**
  * Created by vicboma on 08/02/17.
+ * Trait
  */
 public interface SafetyPromiseAsync<T> extends Loggerable {
 

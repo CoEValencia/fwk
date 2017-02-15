@@ -36,6 +36,18 @@
     default <T> CompletableFuture<T> executeSupply(Supplier<T> supplier) ;
 ```
 
+### Logger | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/body/core/logger/Loggerable.java) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/core/logger/LoggerableTest.java)
+```
+    default void loggerTrace(Object str);
+
+    default void loggerDebug(Object str);
+
+    default void loggerInfo(Object str);
+
+    default void loggerError(Object str);
+```
+
+
 @Victor Bolinches Marin
 
 @vicboma1
