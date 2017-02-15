@@ -1,6 +1,5 @@
 package body.core.commandDispatcher
 
-import java.util.HashSet
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 
@@ -74,7 +73,9 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
         if (null != listFun) {
             for (i in listFun!!.indices) {
                 val res = intArrayOf(i)
-                executeSupply(listFun!!.get(res[0]))
+                executeRunnable {
+                    listFun!!.get(res[0])
+                }
             }
         }
 
@@ -86,7 +87,9 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
         if (null != listFun) {
             for (i in listFun!!.indices) {
                 val res = intArrayOf(i)
-                executeSupply(listFun!!.get(res[0]))
+                executeRunnable {
+                    listFun!!.get(res[0])
+                }
             }
             remove(command)
         }
@@ -101,7 +104,7 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
             return CompletableFuture.completedFuture(null)
 
         val res = hashSetOf<CompletableFuture<T>>()
-        return CompletableFuture.runAsync {
+        return executeRunnable {
             logger.debug("Start dispatchAll ")
             while(res.size != toArray?.size) {
                 toArray?.
@@ -122,7 +125,7 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
             return CompletableFuture.completedFuture(null)
 
         val res = CompletableFuture<H>()
-        CompletableFuture.runAsync {
+        executeRunnable {
             logger.debug("Start dispatchAny ")
             while (!res.isDone) {
                 toArray?.
