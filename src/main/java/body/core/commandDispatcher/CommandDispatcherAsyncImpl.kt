@@ -20,7 +20,6 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
 
     override fun add(command: String, completableList: List<CompletableFuture<T>>): CommandDispatcherAsync<T> {
         completableList
-                .stream()
                 .filter { it -> it != null }
                 .forEach { it -> add(command, it) }
 
