@@ -29,13 +29,13 @@
 ### Safety Promise Async | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/body/core/safetyPromise/SafetyPromiseAsync.java) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/core/safetyPromise/SafetyPromiseAsyncTest.java)
 ```java
 
-    default <T> CompletableFuture<Void> executeRunnable(CompletableFuture<T> promise);
-
     default CompletableFuture<Void> executeRunnable(Runnable runnable);
 
-    default CompletableFuture<T> executeSupply(CompletableFuture<T> promise);
+    default<T> CompletableFuture<T> executeSupply(Supplier<T> supplier);
 
-    default <T> CompletableFuture<T> executeSupply(Supplier<T> supplier) ;
+    default CompletableFuture<Void> executeRunnableCached(Runnable runnable);
+
+    default <T> CompletableFuture<T> executeSupplyCached(Supplier<T> supplier);
 ```
 
 ### Logger | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/body/core/logger/Loggerable.java) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/core/logger/LoggerableTest.java)
