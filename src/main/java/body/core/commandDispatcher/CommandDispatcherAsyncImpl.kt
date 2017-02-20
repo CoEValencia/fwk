@@ -1,7 +1,9 @@
 package body.core.commandDispatcher
 
+import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executor
 
 /**
  * Created by vicboma on 08/02/17.
@@ -72,9 +74,19 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
         if (null != listFun) {
             for (i in listFun!!.indices) {
                 val res = intArrayOf(i)
-                executeRunnable {
-                    listFun!!.get(res[0])
-                }
+                executeRunnable(completable(listFun, res))
+            }
+        }
+
+        return this
+    }
+
+    override fun dispatch(command: String, executor: Executor): CommandDispatcherAsync<T> {
+        val listFun = map.get(command)
+        if (null != listFun) {
+            for (i in listFun!!.indices) {
+                val res = intArrayOf(i)
+                executeRunnable(completable(listFun, res),executor)
             }
         }
 
@@ -86,14 +98,31 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
         if (null != listFun) {
             for (i in listFun!!.indices) {
                 val res = intArrayOf(i)
-                executeRunnable {
-                    listFun!!.get(res[0])
-                }
+                executeRunnable(completable(listFun, res))
             }
             remove(command)
         }
 
         return this
+    }
+
+    override fun dispatchOnce(command: String,executor: Executor): CommandDispatcherAsync<T> {
+        val listFun = map.get(command)
+        if (null != listFun) {
+            for (i in listFun!!.indices) {
+                val res = intArrayOf(i)
+                executeRunnable(completable(listFun, res),executor)
+            }
+            remove(command)
+        }
+
+        return this
+    }
+
+    private fun completable(listFun: MutableList<CompletableFuture<T>>?, res: IntArray): Runnable {
+        return Runnable {
+            listFun!!.get(res[0])
+        }
     }
 
     override fun dispatchAll(command: String): CompletableFuture<Void> {
@@ -103,19 +132,34 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
             return CompletableFuture.completedFuture(null)
 
         val res = hashSetOf<CompletableFuture<T>>()
-        return executeRunnable {
+        return executeRunnable(this.all(res, toArray))
+    }
+
+    override fun dispatchAll(command: String, executor:Executor): CompletableFuture<Void> {
+        val child = map.get(command)
+        val toArray = child?.toTypedArray()
+        if(toArray?.size!! <= 0)
+            return CompletableFuture.completedFuture(null)
+
+        val res = hashSetOf<CompletableFuture<T>>()
+        return executeRunnable(this.all(res, toArray),executor)
+    }
+
+    private fun all(res: HashSet<CompletableFuture<T>>, toArray: Array<CompletableFuture<T>>?): Runnable {
+        return Runnable {
             logger.debug("Start dispatchAll ")
-            while(res.size != toArray?.size) {
+            while (res.size != toArray?.size) {
                 toArray?.
-                    filter { it.isDone }?.
-                    forEach {
-                        res.add(it)
-                }
+                        filter { it.isDone }?.
+                        forEach {
+                            res.add(it)
+                        }
             }
             res.forEach { logger.debug("${it.toString()}") }
             logger.debug("End dispatchAll ")
         }
     }
+
 
     override fun <H> dispatchAny(command: String) : CompletableFuture<H> {
         val child = map.get(command)
@@ -124,7 +168,23 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
             return CompletableFuture.completedFuture(null)
 
         val res = CompletableFuture<H>()
-        executeRunnable {
+        executeRunnable(this.any(res, toArray))
+        return res
+    }
+
+    override fun <H> dispatchAny(command: String, executor: Executor) : CompletableFuture<H> {
+        val child = map.get(command)
+        val toArray = child?.toTypedArray()
+        if(toArray?.size!! <= 0)
+            return CompletableFuture.completedFuture(null)
+
+        val res = CompletableFuture<H>()
+        executeRunnable(this.any(res, toArray),executor)
+        return res
+    }
+
+    private fun <H> any(res: CompletableFuture<H>, toArray: Array<CompletableFuture<T>>?) : Runnable {
+        return Runnable {
             logger.debug("Start dispatchAny ")
             while (!res.isDone) {
                 toArray?.
@@ -144,8 +204,6 @@ class CommandDispatcherAsyncImpl<T> internal constructor() : CommandDispatcherAs
             }
             logger.debug("End dispatchAny ")
         }
-
-        return res
     }
 
     override fun size() = this.map.size
