@@ -17,7 +17,7 @@ public class JsonToJaxbTest {
 
     @org.junit.Before
     public void setUp() throws Exception {
-        jsonToJaxb = JsonToJaxbImpl.create();
+        jsonToJaxb = JsonToJaxbImpl.Companion.create();
     }
 
     @org.junit.After
@@ -232,6 +232,23 @@ public class JsonToJaxbTest {
     }
 
     @Test
+    public void testToJsonJaxBElementString() throws JAXBException {
+        String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+                + "<>\n"
+                + "    <boo>100</boo>\n"
+                + "    <foo>vicboma1</foo>\n"
+                + "    <too>222.369</too>\n"
+                + "</>\n";
+
+        String json = "{\"foo\":\"vicboma1\",\"boo\":100,\"too\":222.369}";
+        final Pojo result = jsonToJaxb.toClass(json, new TypeToken<Pojo>(){}.getType());
+
+        final String element = jsonToJaxb.ToJaxbElementString(result);
+
+        Assert.assertEquals(expected,element.toString());
+    }
+
+    @Test
     public void testToJsonJaxBElementStringLocal() throws JAXBException {
         String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
                 + "<LocalNamespace>\n"
@@ -244,7 +261,6 @@ public class JsonToJaxbTest {
         final Pojo result = jsonToJaxb.toClass(json, new TypeToken<Pojo>(){}.getType());
 
         final String element = jsonToJaxb.ToJaxbElementString("LocalNamespace", result);
-
 
         Assert.assertEquals(expected,element.toString());
     }
