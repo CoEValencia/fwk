@@ -22,6 +22,14 @@
     fun dispatchAll(command : String) :  CompletableFuture<Void>
 
     fun <T> dispatchAny(command : String) : CompletableFuture<T>
+    
+    fun dispatch(command: String, executor: Executor): CommandDispatcherAsync<T>
+    
+    fun dispatchOnce(command: String,executor: Executor): CommandDispatcherAsync<T>
+
+    fun dispatchAll(command: String,executor: Executor): CompletableFuture<Void>
+
+    fun <T> dispatchAny(command: String,executor: Executor): CompletableFuture<T>
 
     fun size() : Int
 ```
@@ -33,9 +41,9 @@
 
     default<T> CompletableFuture<T> executeSupply(Supplier<T> supplier);
 
-    default CompletableFuture<Void> executeRunnableCached(Runnable runnable);
+    default CompletableFuture<Void> executeRunnable(Runnable runnable, executor: Executor);
 
-    default <T> CompletableFuture<T> executeSupplyCached(Supplier<T> supplier);
+    default <T> CompletableFuture<T> executeSupply(Supplier<T> supplier, executor: Executor);
 ```
 
 ### Logger | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/body/core/logger/Loggerable.java) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/core/logger/LoggerableTest.java)

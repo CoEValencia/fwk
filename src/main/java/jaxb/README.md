@@ -14,49 +14,67 @@ Clase que permite :
 ## API
 
 ```java
-    <T> T toClass(String json, Type _type);
+   fun <T : Any> toClass(json: String, _type: Type) : T
 
-    <T> T toClass(String json);
+   fun <T : Any> toClass(json: String): T
 
-    <T> String toJson(T clazz, Type _type);
+   fun <T : Any> toJson(clazz: T, _type: Type): String
 
-    <T> String toJson(T clazz);
+   fun <T : Any> toJson(clazz: T): String
 
-    <T> String ToXml(T obj) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any> ToXml(obj: T): String
 
-    <I,O> String ToXml(String json, Type _type) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any, O> ToXml(json: String, _type: Type): String
 
-    <T> String ToJaxbElementString(T obj) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any> ToJaxbElementString(obj: T): String
 
-    <T> String ToJaxbElementString(String local, T obj) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any> ToJaxbElementString(local: String, obj: T): String
 
-    <T> String ToJaxbElementString(String uri, String local, T obj) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any> ToJaxbElementString(uri: String, local: String, obj: T): String
 
-    <T> String ToJaxbElementString(String uri, String local, String prefix, T obj) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any> ToJaxbElementString(uri: String, local: String, prefix: String, obj: T): String
 
-    <T> JAXBElement<T> ToJaxbElement(T obj) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any> ToJaxbElement(obj: T): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String local, T obj) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any> ToJaxbElement(local: String, obj: T): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String uri, String local, T obj) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any> ToJaxbElement(uri: String, local: String, obj: T): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String uri, String local, String prefix, T obj) throws JAXBException;
+   @Throws(JAXBException::class)
+   fun <T : Any> ToJaxbElement(uri: String, local: String, prefix: String, obj: T): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String fullPathNamespaceClass, String json, Type type) throws JAXBException, ClassNotFoundException;
+   @Throws(JAXBException::class, ClassNotFoundException::class)
+   fun <T : Any> ToJaxbElement(fullPathNamespaceClass: String, json: String, type: Type): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String fullPathNamespaceClass, String json) throws JAXBException, ClassNotFoundException, InstantiationException, IllegalAccessException;
+   @Throws(JAXBException::class, ClassNotFoundException::class, InstantiationException::class, IllegalAccessException::class)
+   fun <T : Any> ToJaxbElement(fullPathNamespaceClass: String, json: String): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String local, String fullPathNamespaceClass, String json, Type type) throws JAXBException, ClassNotFoundException;
+   @Throws(JAXBException::class, ClassNotFoundException::class)
+   fun <T : Any> ToJaxbElement(local: String, fullPathNamespaceClass: String, json: String, type: Type): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String uri, String local, String fullPathNamespaceClass, String json, Type type) throws JAXBException, ClassNotFoundException;
+   @Throws(JAXBException::class, ClassNotFoundException::class)
+   fun <T : Any> ToJaxbElement(uri: String, local: String, fullPathNamespaceClass: String, json: String, type: Type): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String uri, String local, String prefix, String fullPathNamespaceClass, String json, Type type) throws JAXBException, ClassNotFoundException;
+   @Throws(JAXBException::class, ClassNotFoundException::class)
+   fun <T : Any> ToJaxbElement(uri: String, local: String, prefix: String, fullPathNamespaceClass: String, json: String, type: Type): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String local, String fullPathNamespaceClass, String json) throws JAXBException, ClassNotFoundException;
+   @Throws(JAXBException::class, ClassNotFoundException::class)
+   fun <T : Any> ToJaxbElement(local: String, fullPathNamespaceClass: String, json: String): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String uri, String local, String fullPathNamespaceClass, String json) throws JAXBException, ClassNotFoundException;
+   @Throws(JAXBException::class, ClassNotFoundException::class)
+   fun <T : Any> ToJaxbElement(uri: String, local: String, fullPathNamespaceClass: String, json: String): JAXBElement<T>
 
-    <T> JAXBElement<T> ToJaxbElement(String uri, String local, String prefix, String fullPathNamespaceClass, String json) throws JAXBException, ClassNotFoundException;
+   @Throws(JAXBException::class, ClassNotFoundException::class)
+   fun <T : Any> ToJaxbElement(uri: String, local: String, prefix: String, fullPathNamespaceClass: String, json: String): JAXBElement<T>
 
 ```
 
