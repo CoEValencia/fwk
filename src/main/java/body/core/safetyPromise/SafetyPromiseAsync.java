@@ -4,16 +4,17 @@ import body.core.logger.Loggerable;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Supplier;
+
+import static java.util.concurrent.CompletableFuture.completedFuture;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 /**
  * Created by vicboma on 08/02/17.
  * Mixin
  */
 public interface SafetyPromiseAsync<T> extends Loggerable {
-
-    static final AtomicInteger atomic = new AtomicInteger(1);
-    static final ExecutorService executor = Executors.newCachedThreadPool(r -> new Thread(r, "Async thread: "+atomic.getAndIncrement()));
 
     /**
      * ForkJoinTask
@@ -31,6 +32,10 @@ public interface SafetyPromiseAsync<T> extends Loggerable {
         return CompletableFuture.supplyAsync(supplier);
     }
 
+    default<K,V> CompletableFuture<V> executeFunction(Function<K,V> func, K key) {
+        //getLogger().debug("Start executeFunction(Function<K,V> func)  ");
+        return CompletableFuture.completedFuture(func.apply(key));
+    }
 
     default CompletableFuture<Void> executeRunnable(Runnable runnable, Executor executor) {
         //getLogger().debug("Start executeRunnableCached(Runnable runnable, Executor executor) ");
