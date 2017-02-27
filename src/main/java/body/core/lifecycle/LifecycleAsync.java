@@ -3,15 +3,16 @@ package body.core.lifecycle;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
-public interface LifecycleAsync {
+public interface LifecycleAsync<T> {
 
-    <T> T getObject();
+     T getObject();
     String getState();
 
     Boolean isInitialize();
     Boolean isPreDestroy();
     Boolean isPostConstructor();
     Boolean isResume();
+    Boolean isNotState();
 
     <H,T> CompletableFuture<T> initialize(Function<H,T> fun);
     <H,T> CompletableFuture<T> preDestroy(Function<H,T> fun);
