@@ -59,8 +59,10 @@
 ```
 
 ### Buffered Image Memory From Component | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/image/BufferedImageMemoryFromComponent.kt) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/image/BufferedImageMemoryFromComponentTest.java)
-```java 
+```kotlin 
+
     fun invoke(cmp: Component): BufferedImage 
+    
 ```
 
 @Author : Victor Bolinches Marin
