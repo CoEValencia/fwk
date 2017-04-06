@@ -58,6 +58,10 @@
     default void loggerError(Object str);
 ```
 
+### Image | [src](https://github.com/CoEValencia/fwk/blob/master/src/main/java/image/BufferedImageMemoryFromComponent.kt) - [test](https://github.com/CoEValencia/fwk/blob/master/src/test/java/body/image/BufferedImageMemoryFromComponentTest.java)
+```java 
+    fun invoke(cmp: Component): BufferedImage 
+```
 
 @Author : Victor Bolinches Marin
 
