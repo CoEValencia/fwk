@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -62,25 +63,23 @@ public class BufferedImageMemoryFromComponentTest implements Loggerable{
     @Test
     public void testButtonPixelImage() throws Exception {
 
-        java.util.List<Integer> expectedYellow = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36);
-        final int hpixelYellow = 27;
+        java.util.List<Integer> expectedYellow = Arrays.asList(6, 7, 8, 9, 10, 11, 12, 13, 15, 16, 18, 19, 20);
+        final int hpixelYellow = 13;
 
         final JButton btn = new JButton();
         btn.setBackground(Color.YELLOW);
-        JPanel p = new JPanel();
+        final JPanel p = new JPanel();
         p.add(btn);
 
-        JPanel inner = new JPanel();
-        inner.setBorder(BorderFactory.createTitledBorder("A border"));
-        inner.add(new JLabel("Some label"));
-        p.add(inner);
+        final BufferedImage img = bufferedImageMemoryFromComponent.invoke(p);
 
-        BufferedImage img = bufferedImageMemoryFromComponent.invoke(p);
-
-        for(int i = 0; i< expectedYellow.size() ;  i++) {
-                final int clr = img.getRGB( expectedYellow.get(i), hpixelYellow );
-                Color color = new Color(clr, true);
-               Assert.assertEquals(color, Color.YELLOW);
-            }
+        for (int i = 0; i < expectedYellow.size(); i++) {
+            int clr = img.getRGB(expectedYellow.get(i), hpixelYellow);
+            Color color = new Color(clr, true);
+            Assert.assertEquals(color, Color.YELLOW);
         }
+
+
+
+    }
 }
